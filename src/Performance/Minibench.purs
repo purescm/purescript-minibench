@@ -18,13 +18,11 @@ import Data.Int (toNumber)
 import Effect (Effect, forE)
 import Effect.Console (log)
 import Effect.Ref as Ref
-import Effect.Uncurried (EffectFn1, runEffectFn1)
 import Data.Number (infinity)
 import Math (max, min, sqrt)
 import Partial.Unsafe (unsafeCrashWith)
 
--- | A wrapper around the Node `process.hrtime()` function.
-foreign import hrTime :: EffectFn1 (Array Int) (Array Int)
+foreign import time :: Effect (Array Int)
 
 -- | Force garbage collection.
 -- | Requires node to be run with the --force-gc flag.
@@ -32,14 +30,18 @@ foreign import gc :: Effect Unit
 
 foreign import toFixed :: Number -> String
 
-fromHrTime :: Array Int -> Number
-fromHrTime [s, ns] = toNumber s * 1.0e9 + toNumber ns
-fromHrTime _ = unsafeCrashWith "fromHrTime: unexpected result from process.hrtime()"
+fromTime :: Array Int -> Number
+fromTime [s, ns] = toNumber s * 1.0e9 + toNumber ns
+fromTime _ = unsafeCrashWith "fromHrTime: unexpected result from process.hrtime()"
+
+timeDiff :: Array Int -> Array Int -> Array Int
+timeDiff [t1s, t1ns] [t2s, t2ns] = [t2s - t1s, t2ns - t1ns]
+timeDiff _ _ = unsafeCrashWith "timeDiff: unexpected result"
 
 withUnits :: Number -> String
 withUnits t
   | t < 1.0e3 = toFixed t <> " ns"
-  | t < 1.0e6 = toFixed (t / 1.0e3) <> " μs"
+  | t < 1.0e6 = toFixed (t / 1.0e3) <> " us"
   | t < 1.0e9 = toFixed (t / 1.0e6) <> " ms"
   | otherwise = toFixed (t / 1.0e9) <> " s"
 
@@ -80,9 +82,10 @@ benchWith' n f = do
   maxRef <- Ref.new 0.0
   gc
   forE 0 n \_ -> do
-    t1 <- runEffectFn1 hrTime [0, 0]
-    t2 <- const (runEffectFn1 hrTime t1) (f unit)
-    let ns     = fromHrTime t2
+    t1 <- time
+    t2 <- const time (f unit)
+    let t      = timeDiff t1 t2
+        ns     = fromTime t
         square = ns * ns
     _ <- Ref.modify (_ + ns) sumRef
     _ <- Ref.modify (_ + square) sum2Ref

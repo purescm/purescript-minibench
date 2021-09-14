@@ -7,3 +7,6 @@
 /.purs*
 /.psa*
 package-lock.json
+
+# PureScheme
+!/.dir-locals.el

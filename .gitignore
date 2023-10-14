@@ -1,9 +1,12 @@
+/.*
+!/.gitignore
+!/.eslintrc.json
+!/.github
 /bower_components/
 /node_modules/
-/.pulp-cache/
 /output/
-/generated-docs/
-/.psc*
-/.purs*
-/.psa*
 package-lock.json
+yarn.lock
+
+# PureScheme
+!/.dir-locals.el

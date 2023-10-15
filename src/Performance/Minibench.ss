@@ -16,12 +16,11 @@
   ;; execution time in nanoseconds.
   (define timeNs
     (lambda (closure)
-      (lambda ()
         (let
           ([start (current-time 'time-monotonic)])
           (closure 'unit) ;; evaluate the closure
           (let ([end (current-time 'time-monotonic)])
-            (fixnum->flonum (time-nanosecond (time-difference end start))))))))
+            (fixnum->flonum (time-nanosecond (time-difference end start)))))))
 
    ;; instantiate the garbage collection.
   (define gc collect)

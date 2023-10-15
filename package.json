@@ -3,5 +3,5 @@
   "scripts": {
     "build": "spago build",
     "test": "spago build && purescm run --main Test.Main"
-  },
+  }
 }

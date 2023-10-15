@@ -19,9 +19,10 @@ import Data.Number (infinity, max, min, sqrt)
 import Effect (Effect, forE)
 import Effect.Console (log)
 import Effect.Ref as Ref
+import Effect.Uncurried (EffectFn1, runEffectFn1)
 
 -- | Returns the number of nanoseconds it takes to evaluate the given closure.
-foreign import timeNs :: forall a. (Unit -> a) -> Effect Number
+foreign import timeNs :: forall a. EffectFn1 (Unit -> a) Number
 
 -- | Force garbage collection.
 -- | Requires node to be run with the --force-gc flag.
@@ -73,7 +74,7 @@ benchWith' n f = do
   maxRef <- Ref.new 0.0
   gc
   forE 0 n \_ -> do
-    ns <- timeNs f
+    ns <- runEffectFn1 timeNs f
     let square = ns * ns
     _ <- Ref.modify (_ + ns) sumRef
     _ <- Ref.modify (_ + square) sum2Ref

@@ -12,10 +12,10 @@
   )
 
   (define timeNs
-    (lambda (closure)
+    (lambda (k)
       (let
         ([start (current-time 'time-monotonic)])
-        (closure 'unit) ;; evaluate the closure
+        (k 'unit)
         (let ([end (current-time 'time-monotonic)])
           (fixnum->flonum (time-nanosecond (time-difference end start)))))))
 

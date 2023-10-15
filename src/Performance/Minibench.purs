@@ -12,14 +12,14 @@ module Performance.Minibench
   , withUnits
   ) where
 
-import Prelude hiding (min, max)
+import Prelude hiding (min,max)
 
 import Data.Int (toNumber)
-import Data.Number (infinity, max, min, sqrt)
 import Effect (Effect, forE)
 import Effect.Console (log)
 import Effect.Ref as Ref
 import Effect.Uncurried (EffectFn1, runEffectFn1)
+import Data.Number (infinity, max, min, sqrt)
 
 -- | Returns the number of nanoseconds it takes to evaluate the given closure.
 foreign import timeNs :: forall a. EffectFn1 (Unit -> a) Number

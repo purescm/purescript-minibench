@@ -13,8 +13,7 @@
 
   (define timeNs
     (lambda (k)
-      (let
-        ([start (current-time 'time-monotonic)])
+      (let ([start (current-time 'time-monotonic)])
         (k 'unit)
         (let ([end (current-time 'time-monotonic)])
           (fixnum->flonum (time-nanosecond (time-difference end start)))))))
